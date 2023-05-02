@@ -37,7 +37,10 @@ public class SyncCommand extends JavaPlugin implements CommandExecutor {
                     @Override
                     public void onPMessage(String pattern, String channel, String message) {
                         if (config.getStringList("channels").contains(channel)) {
-                            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), message);
+                            // Schedule the command to be executed on the main server thread
+                            Bukkit.getScheduler().runTask(SyncCommand.this, () -> {
+                                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), message);
+                            });
                         }
                     }
                 };
