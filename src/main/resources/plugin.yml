@@ -1,4 +1,7 @@
 name: SyncCommand
-version: '${project.version}'
+version: 1.0
 main: org.me.synccommand.SyncCommand
-api-version: 1.19
+api-version: 1.8
+commands:
+  sync:
+    description: Synchronize a command across multiple servers.
