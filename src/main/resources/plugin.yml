@@ -1,6 +1,13 @@
 name: SyncCommand
 version: 1.0
 main: org.me.synccommand.SyncCommand
+author: TonyPak
 commands:
   sync:
     description: Synchronize a command across multiple servers.
+    permission: sync.sync
+
+permissions:
+    sync.sync:
+        description: Allows the user to synchronize a command across multiple servers.
+        default: op
