@@ -16,6 +16,7 @@ import java.util.Arrays;
 public class SyncCommand extends JavaPlugin implements CommandExecutor {
 
     private JedisPool jedisPool;
+    private JedisPubSub jedisPubSub;
 
     @Override
     public void onEnable() {
@@ -38,9 +39,7 @@ public class SyncCommand extends JavaPlugin implements CommandExecutor {
                     public void onPMessage(String pattern, String channel, String message) {
                         if (config.getStringList("channels").contains(channel)) {
                             // Schedule the command to be executed on the main server thread
-                            Bukkit.getScheduler().runTask(SyncCommand.this, () -> {
-                                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), message);
-                            });
+                            Bukkit.getScheduler().runTask(SyncCommand.this, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), message));
                         }
                     }
                 };
@@ -51,6 +50,9 @@ public class SyncCommand extends JavaPlugin implements CommandExecutor {
 
     @Override
     public void onDisable() {
+        if (jedisPubSub != null) {
+            jedisPubSub.unsubscribe();
+        }
         if (jedisPool != null) {
             jedisPool.close();
         }
