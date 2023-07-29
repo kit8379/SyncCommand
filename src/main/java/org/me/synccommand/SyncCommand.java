@@ -34,7 +34,7 @@ public class SyncCommand extends JavaPlugin implements CommandExecutor {
         // Listener for Redis messages
         Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
             try (Jedis jedis = jedisPool.getResource()) {
-                JedisPubSub jedisPubSub = new JedisPubSub() {
+                jedisPubSub = new JedisPubSub() {
                     @Override
                     public void onPMessage(String pattern, String channel, String message) {
                         if (config.getStringList("channels").contains(channel)) {
