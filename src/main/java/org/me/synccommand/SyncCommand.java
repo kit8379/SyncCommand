@@ -16,7 +16,17 @@ import java.util.Arrays;
 public class SyncCommand extends JavaPlugin implements CommandExecutor {
 
     private JedisPool jedisPool;
-    private JedisPubSub jedisPubSub;
+    private MyJedisPubSub jedisPubSub;
+
+    private class MyJedisPubSub extends JedisPubSub {
+        @Override
+        public void onPMessage(String pattern, String channel, String message) {
+            if (getConfig().getStringList("channels").contains(channel)) {
+                // Schedule the command to be executed on the main server thread
+                Bukkit.getScheduler().runTask(SyncCommand.this, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), message));
+            }
+        }
+    }
 
     @Override
     public void onEnable() {
@@ -31,18 +41,13 @@ public class SyncCommand extends JavaPlugin implements CommandExecutor {
 
         Bukkit.getPluginCommand("sync").setExecutor(this);
 
-        // Listener for Redis messages
+        setupJedisListener();
+    }
+
+    private void setupJedisListener() {
         Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
             try (Jedis jedis = jedisPool.getResource()) {
-                jedisPubSub = new JedisPubSub() {
-                    @Override
-                    public void onPMessage(String pattern, String channel, String message) {
-                        if (config.getStringList("channels").contains(channel)) {
-                            // Schedule the command to be executed on the main server thread
-                            Bukkit.getScheduler().runTask(SyncCommand.this, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), message));
-                        }
-                    }
-                };
+                jedisPubSub = new MyJedisPubSub();
                 jedis.psubscribe(jedisPubSub, "*");
             }
         });
