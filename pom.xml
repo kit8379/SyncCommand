@@ -6,13 +6,14 @@
 
     <groupId>org.me</groupId>
     <artifactId>SyncCommand</artifactId>
-    <version>1.0</version>
+    <version>${plugin.version}</version>
     <packaging>jar</packaging>
 
     <name>SyncCommand</name>
 
     <properties>
-        <java.version>1.8</java.version>
+        <plugin.version>1.0</plugin.version>
+        <java.version>11</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 

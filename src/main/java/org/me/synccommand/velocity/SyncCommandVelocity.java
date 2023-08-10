@@ -12,7 +12,7 @@ import javax.inject.Inject;
 import java.util.List;
 import java.util.logging.Logger;
 
-@Plugin(id = "synccommand", name = "SyncCommand", version = "1.0",
+@Plugin(id = "synccommand", name = "SyncCommand", version = "${plugin.version}",
         description = "Sync commands across servers", authors = {"TonyPak"})
 public class SyncCommandVelocity {
 
