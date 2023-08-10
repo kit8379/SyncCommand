@@ -1,18 +1,28 @@
-package org.me.synccommand.bukkit;
+package org.me.synccommand.bungee;
 
+import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.plugin.Listener;
+import net.md_5.bungee.api.plugin.Plugin;
+import net.md_5.bungee.config.Configuration;
 import org.me.synccommand.shared.RedisHandler;
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.java.JavaPlugin;
 import redis.clients.jedis.JedisPubSub;
+
 import java.util.List;
+import java.util.logging.Logger;
 
-public class SyncCommandBukkit extends JavaPlugin {
-
+public class SyncCommandBungee extends Plugin implements Listener {
+    private ProxyServer proxy;
+    private Logger logger;
+    private ConfigHelper configHelper;
     private JedisPubSub pubSub;
     private Thread redisListenerThread;
 
     @Override
     public void onEnable() {
+        logger = getLogger();
+        proxy = getProxy();
+        configHelper = new ConfigHelper(this);
+
         saveDefaultConfig();
 
         String host = getConfig().getString("redisHost");
@@ -26,7 +36,7 @@ public class SyncCommandBukkit extends JavaPlugin {
         try {
             RedisHandler.connect(host, port, password);
         } catch (Exception e) {
-            getLogger().warning("Failed to connect to Redis. Disabling plugin.");
+            logger.warning("Failed to connect to Redis. Disabling plugin.");
             e.printStackTrace();
             return;
         }
@@ -34,19 +44,20 @@ public class SyncCommandBukkit extends JavaPlugin {
         pubSub = new JedisPubSub() {
             @Override
             public void onMessage(String channel, String message) {
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), message);
+                ProxyServer.getInstance().getPluginManager().dispatchCommand(ProxyServer.getInstance().getConsole(), message);
             }
         };
 
         redisListenerThread = new Thread(() -> RedisHandler.subscribe(pubSub, namespacedChannels));
         redisListenerThread.start();
 
-        this.getCommand("sync").setExecutor(new SyncCommand());
+        getProxy().getPluginManager().registerCommand(this, new SyncCommand());
+        logger.info("SyncCommand has started successfully!");
     }
 
     @Override
     public void onDisable() {
-        getLogger().info("SyncCommand is shutting down...");
+        logger.info("SyncCommand is shutting down...");
         if (pubSub != null) {
             pubSub.unsubscribe();
         }
@@ -61,6 +72,14 @@ public class SyncCommandBukkit extends JavaPlugin {
         }
 
         RedisHandler.disconnect();
-        getLogger().info("SyncCommand has shut down successfully!");
+        logger.info("SyncCommand has shut down successfully!");
+    }
+
+    public void saveDefaultConfig() {
+        configHelper.saveDefaultConfig();
+    }
+
+    public Configuration getConfig() { // Return type is BungeeCord's Configuration
+        return configHelper.getConfig();
     }
 }

@@ -10,24 +10,28 @@ import redis.clients.jedis.JedisPubSub;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.logging.Logger;
 
 @Plugin(id = "synccommand", name = "SyncCommand", version = "1.0",
         description = "Sync commands across servers", authors = {"TonyPak"})
 public class SyncCommandVelocity {
 
     private final ProxyServer proxy;
+    private final Logger logger;
     private final ConfigHelper configHelper;
     private JedisPubSub pubSub;
     private Thread redisListenerThread;
 
     @Inject
-    public SyncCommandVelocity(ProxyServer server) {
+    public SyncCommandVelocity(ProxyServer server, Logger logger) {
         this.proxy = server;
+        this.logger = logger;
         this.configHelper = new ConfigHelper(proxy.getPluginManager().getPlugin("synccommand").get());
     }
 
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
+        logger.info("SyncCommand is starting up...");
         saveDefaultConfig();
 
         String host = getConfig().getString("redisHost");
@@ -39,7 +43,13 @@ public class SyncCommandVelocity {
                 .toArray(String[]::new);
 
 
-        RedisHandler.connect(host, port, password);
+        try {
+            RedisHandler.connect(host, port, password);
+        } catch (Exception e) {
+            logger.warning("Failed to connect to Redis. Disabling plugin.");
+            e.printStackTrace();
+            return;
+        }
 
         pubSub = new JedisPubSub() {
             @Override
@@ -52,10 +62,12 @@ public class SyncCommandVelocity {
         redisListenerThread.start();
 
         proxy.getCommandManager().register("syncv", new SyncCommand());
+        logger.info("SyncCommand has started successfully!");
     }
 
     @Subscribe
     public void onProxyShutdown(ProxyShutdownEvent event) {
+        logger.info("SyncCommand is shutting down...");
         if (pubSub != null) {
             pubSub.unsubscribe();
         }
@@ -70,6 +82,7 @@ public class SyncCommandVelocity {
         }
 
         RedisHandler.disconnect();
+        logger.info("SyncCommand has shut down successfully!");
     }
 
     public void saveDefaultConfig() {

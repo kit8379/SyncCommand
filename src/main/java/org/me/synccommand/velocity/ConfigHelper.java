@@ -3,8 +3,6 @@ package org.me.synccommand.velocity;
 import com.velocitypowered.api.plugin.PluginContainer;
 import com.velocitypowered.api.plugin.PluginDescription;
 import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.CustomClassLoaderConstructor;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -22,7 +20,7 @@ public class ConfigHelper {
 
     public ConfigHelper(PluginContainer plugin) {
         this.plugin = plugin;
-        this.yaml = new Yaml(new CustomClassLoaderConstructor(plugin.getInstance().getClass().getClassLoader()));
+        this.yaml = new Yaml();
     }
 
     public void saveDefaultConfig() {
