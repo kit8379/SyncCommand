@@ -1,6 +1,6 @@
 name: SyncCommand
-version: 1.0
-main: org.me.synccommand.SyncCommand
+version: 1.20
+main: org.me.synccommand.bukkit.SyncCommandBukkit
 author: TonyPak
 commands:
   sync:
