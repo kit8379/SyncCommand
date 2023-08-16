@@ -12,11 +12,6 @@ channels:
 
 # Plugin Messages Configuration
 messages:
-  prefix: '§7[§cSyncCommand§7] §r'
-  enabling: '§aSyncCommand is enabling...'
-  enabled: '§aSyncCommand has been enabled.'
-  disabling: '§cSyncCommand is disabling...'
-  disabled: '§cSyncCommand has been disabled.'
   reload: '§aSyncCommand has been reloaded.'
   usage: '§cUsage: /sync <enable|disable>'
   noPermission: '§cYou do not have permission to use this command.'

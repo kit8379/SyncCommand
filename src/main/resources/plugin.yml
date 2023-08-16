@@ -7,7 +7,12 @@ folia-support: true
 commands:
   sync:
     description: Allows the user to synchronize a command across multiple servers.
-    permission: sync.sync
+    usage: /<command>
+    permission: synccommand.admin
+  syncreload:
+    description: Reloads the SyncCommand plugin
+    usage: /<command>
+    permission: synccommand.admin
 permissions:
-    synccommand.sync:
+    synccommand.admin:
         default: op

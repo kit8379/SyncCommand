@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-
 public class ConfigHelper {
 
     private final Logger logger;
@@ -23,7 +22,6 @@ public class ConfigHelper {
     public ConfigHelper(Logger logger) {
         this.logger = logger;
         this.dataFolder = Path.of("plugins/SyncCommand");
-        loadConfiguration();
     }
 
     public void loadConfiguration() {
@@ -76,26 +74,6 @@ public class ConfigHelper {
         return null;
     }
 
-    public String getPrefix() {
-        return Utils.colorize(configData.node("messages", "prefix").getString("&7[&cSyncCommand&7] &r"));
-    }
-
-    public String getEnablingMessage() {
-        return Utils.colorize(configData.node("messages", "enabling").getString("&aSyncCommand is enabling..."));
-    }
-
-    public String getEnabledMessage() {
-        return Utils.colorize(configData.node("messages", "enabled").getString("&aSyncCommand has been enabled."));
-    }
-
-    public String getDisablingMessage() {
-        return Utils.colorize(configData.node("messages", "disabling").getString("&cSyncCommand is disabling..."));
-    }
-
-    public String getDisabledMessage() {
-        return Utils.colorize(configData.node("messages", "disabled").getString("&cSyncCommand has been disabled."));
-    }
-
     public String getReloadMessage() {
         return Utils.colorize(configData.node("messages", "reload").getString("&aSyncCommand has been reloaded."));
     }
@@ -108,7 +86,8 @@ public class ConfigHelper {
         return Utils.colorize(configData.node("messages", "noPermission").getString("&cYou do not have permission to use this command."));
     }
 
-    public String getCommandSyncedMessage() {
-        return Utils.colorize(configData.node("messages", "commandSynced").getString("&aCommand has been synced."));
+    public String getCommandSyncedMessage(String channel) {
+        return Utils.colorize(String.format(configData.node("messages", "commandSynced").getString("&aCommand has been synced to the %s channel."), channel));
     }
+
 }
