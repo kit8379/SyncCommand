@@ -2,7 +2,7 @@ name: SyncCommand
 version: ${project.version}
 api-version: 1.20
 main: org.me.synccommand.bukkit.SyncCommandBukkit
-author: TonyPak
+author: kit8379
 folia-support: true
 commands:
   sync:
