@@ -11,22 +11,36 @@ public class RedisHandler {
 
     public static void connect(String host, int port, String password) {
         pool = new JedisPool(new JedisPoolConfig(), host, port);
-        jedis = pool.getResource();
-        jedis.auth(password);
+        try {
+            jedis = pool.getResource();
+            if (password != null && !password.isEmpty()) {
+                jedis.auth(password);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void publish(String channel, String message) {
-        jedis.publish(channel, message);
+        try {
+            jedis = pool.getResource();
+            jedis.publish(channel, message);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void subscribe(JedisPubSub pubSub, String... channels) {
-        jedis.subscribe(pubSub, channels);
+        try {
+            jedis = pool.getResource();
+            jedis.subscribe(pubSub, channels);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void disconnect() {
         pool.close();
     }
-
-
 }
 

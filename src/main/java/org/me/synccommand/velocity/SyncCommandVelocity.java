@@ -14,8 +14,8 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import javax.inject.Inject;
 import java.util.logging.Logger;
 
-@Plugin(id = "synccommand", name = "SyncCommand", version = "${project.version}",
-        description = "Sync commands across servers", authors = {"TonyPak"})
+@Plugin(id = "synccommand", name = "SyncCommand", version = "1.0",
+        description = "Sync commands across servers", authors = {"kit8379"})
 public class SyncCommandVelocity {
 
     public ProxyServer proxy;

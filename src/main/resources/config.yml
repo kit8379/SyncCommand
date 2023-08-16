@@ -13,6 +13,6 @@ channels:
 # Plugin Messages Configuration
 messages:
   reload: '&aSyncCommand has been reloaded.'
-  usage: '&cUsage: /sync <enable|disable>'
+  usage: '&cUsage: /sync <channel> <command>'
   noPermission: '&cYou do not have permission to use this command.'
   commandSynced: '&aCommand has been synced to the %s channel.'

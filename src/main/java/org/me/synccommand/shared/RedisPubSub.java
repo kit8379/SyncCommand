@@ -24,14 +24,12 @@ public class RedisPubSub {
         int port = configHelper.getRedisPort();
         String password = configHelper.getRedisPassword();
         List<String> originalChannels = configHelper.getChannels();
-        String[] namespacedChannels = originalChannels.stream()
-                .map(channel -> "synccommand." + channel)
-                .toArray(String[]::new);
+        String[] namespacedChannels = originalChannels.toArray(String[]::new);
 
         try {
             RedisHandler.connect(host, port, password);
         } catch (Exception e) {
-            logger.warning("Failed to connect to Redis. Disabling plugin.");
+            logger.warning("Failed to connect to Redis.");
             e.printStackTrace();
             return;
         }

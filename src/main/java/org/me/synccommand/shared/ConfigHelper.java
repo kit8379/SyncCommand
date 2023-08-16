@@ -79,7 +79,7 @@ public class ConfigHelper {
     }
 
     public String getUsageMessage() {
-        return Utils.colorize(configData.node("messages", "usage").getString("&cUsage: /sync <enable|disable>"));
+        return Utils.colorize(configData.node("messages", "usage").getString("&cUsage: /sync <channel> <command>"));
     }
 
     public String getNoPermissionMessage() {
