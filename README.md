@@ -1,6 +1,6 @@
 🚀 SyncCommand 🚀
 
-SyncCommand - the ultimate bridge between your servers! Ever wished you could sync a command across multiple servers in a heartbeat? Now you can! Powered by the blazing fast Redis, SyncCommand delivers that promise.
+SyncCommand - the ultimate command bridge between multiple servers! Ever wished you could sync a command across multiple servers in a heartbeat? Now you can! Powered by the blazing fast Redis, SyncCommand delivers that promise.
 
 🌟 About 🌟
 
@@ -30,6 +30,7 @@ SyncCommand is a robust and innovative plugin that enables the synchronization o
 
     📜 Open the config.yml file in your favorite text editor.
     📝 Edit the configuration to your liking.
+    🔄 Restart your server. Watch SyncCommand rise!
 
 config.yml (default):
 ```yaml
@@ -46,8 +47,7 @@ messages:
   noPermission: "&cNuh-uh! You can't do that here!"
   commandSynced: "&aBoom! Command synced to %s channel."
 ```
-    🔄 Restart your server. Watch SyncCommand rise!
-
+    
 💬 Commands 💬
 
     /sync [channel] [command]: 🌉 Sync your commands to the specified channel
