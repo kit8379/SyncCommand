@@ -5,7 +5,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.me.synccommand.shared.RedisHandler;
 
-public class SyncCommand implements CommandExecutor {
+public class CommandHelper implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {

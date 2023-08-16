@@ -5,7 +5,7 @@ import com.velocitypowered.api.command.SimpleCommand;
 import net.kyori.adventure.text.Component;
 import org.me.synccommand.shared.RedisHandler;
 
-public class SyncCommand implements SimpleCommand {
+public class CommandHelper implements SimpleCommand {
 
     @Override
     public void execute(Invocation invocation) {

@@ -1,4 +1,4 @@
 name: SyncCommand
 main: org.me.synccommand.bungee.SyncCommandBungee
-version: ${plugin.version}
+version: ${project.version}
 author: TonyPak

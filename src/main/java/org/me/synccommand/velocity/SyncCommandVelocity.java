@@ -5,6 +5,7 @@ import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.proxy.ProxyServer;
+import org.me.synccommand.shared.ConfigHelper;
 import org.me.synccommand.shared.RedisHandler;
 import redis.clients.jedis.JedisPubSub;
 
@@ -12,12 +13,12 @@ import javax.inject.Inject;
 import java.util.List;
 import java.util.logging.Logger;
 
-@Plugin(id = "synccommand", name = "SyncCommand", version = "${plugin.version}",
+@Plugin(id = "synccommand", name = "SyncCommand", version = "${project.version}",
         description = "Sync commands across servers", authors = {"TonyPak"})
 public class SyncCommandVelocity {
 
-    private final ProxyServer proxy;
-    private final Logger logger;
+    public final ProxyServer proxy;
+    public final Logger logger;
     private final ConfigHelper configHelper;
     private JedisPubSub pubSub;
     private Thread redisListenerThread;
@@ -26,18 +27,17 @@ public class SyncCommandVelocity {
     public SyncCommandVelocity(ProxyServer server, Logger logger) {
         this.proxy = server;
         this.logger = logger;
-        this.configHelper = new ConfigHelper(proxy.getPluginManager().getPlugin("synccommand").get());
+        configHelper = new ConfigHelper(logger);
     }
 
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
         logger.info("SyncCommand is starting up...");
-        saveDefaultConfig();
+        String host = configHelper.getRedisHost();
+        int port = configHelper.getRedisPort();
+        String password = configHelper.getRedisPassword();
+        List<String> originalChannels = configHelper.getChannels();
 
-        String host = getConfig().getString("redisHost");
-        int port = getConfig().getInt("redisPort");
-        String password = getConfig().getString("redisPassword");
-        List<String> originalChannels = getConfig().getStringList("channels");
         String[] namespacedChannels = originalChannels.stream()
                 .map(channel -> "synccommand." + channel)
                 .toArray(String[]::new);
@@ -61,7 +61,7 @@ public class SyncCommandVelocity {
         redisListenerThread = new Thread(() -> RedisHandler.subscribe(pubSub, namespacedChannels));
         redisListenerThread.start();
 
-        proxy.getCommandManager().register("syncv", new SyncCommand());
+        proxy.getCommandManager().register("syncv", new CommandHelper());
         logger.info("SyncCommand has started successfully!");
     }
 
@@ -83,13 +83,5 @@ public class SyncCommandVelocity {
 
         RedisHandler.disconnect();
         logger.info("SyncCommand has shut down successfully!");
-    }
-
-    public void saveDefaultConfig() {
-        configHelper.saveDefaultConfig();
-    }
-
-    public ConfigHelper.Configuration getConfig() {
-        return configHelper.getConfig();
     }
 }

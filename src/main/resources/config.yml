@@ -1,6 +1,23 @@
-redisHost: "127.0.0.1"
-redisPort: 6379
-redisPassword: "123456"
+# Redis Configuration
+redis:
+  host: localhost
+  port: 6379
+  password: '' # Empty password as default. Adjust if needed.
+
+# Channels that the plugin will listen to.
 channels:
-  - "all"
-  - "lobby"
+  - channel1
+  - channel2
+  # Add more channels as needed
+
+# Plugin Messages Configuration
+messages:
+  prefix: '§7[§cSyncCommand§7] §r'
+  enabling: '§aSyncCommand is enabling...'
+  enabled: '§aSyncCommand has been enabled.'
+  disabling: '§cSyncCommand is disabling...'
+  disabled: '§cSyncCommand has been disabled.'
+  reload: '§aSyncCommand has been reloaded.'
+  usage: '§cUsage: /sync <enable|disable>'
+  noPermission: '§cYou do not have permission to use this command.'
+  commandSynced: '§aCommand has been synced.'

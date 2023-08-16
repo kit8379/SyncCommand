@@ -3,7 +3,7 @@ package org.me.synccommand.bungee;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
-import net.md_5.bungee.config.Configuration;
+import org.me.synccommand.shared.ConfigHelper;
 import org.me.synccommand.shared.RedisHandler;
 import redis.clients.jedis.JedisPubSub;
 
@@ -19,16 +19,15 @@ public class SyncCommandBungee extends Plugin implements Listener {
 
     @Override
     public void onEnable() {
-        logger = getLogger();
         proxy = getProxy();
-        configHelper = new ConfigHelper(this);
+        logger = getLogger();
+        configHelper = new ConfigHelper(logger);
 
-        saveDefaultConfig();
-
-        String host = getConfig().getString("redisHost");
-        int port = getConfig().getInt("redisPort");
-        String password = getConfig().getString("redisPassword");
-        List<String> originalChannels = getConfig().getStringList("channels");
+        logger.info("SyncCommand is starting up...");
+        String host = configHelper.getRedisHost();
+        int port = configHelper.getRedisPort();
+        String password = configHelper.getRedisPassword();
+        List<String> originalChannels = configHelper.getChannels();
         String[] namespacedChannels = originalChannels.stream()
                 .map(channel -> "synccommand." + channel)
                 .toArray(String[]::new);
@@ -44,14 +43,14 @@ public class SyncCommandBungee extends Plugin implements Listener {
         pubSub = new JedisPubSub() {
             @Override
             public void onMessage(String channel, String message) {
-                ProxyServer.getInstance().getPluginManager().dispatchCommand(ProxyServer.getInstance().getConsole(), message);
+                proxy.getPluginManager().dispatchCommand(ProxyServer.getInstance().getConsole(), message);
             }
         };
 
         redisListenerThread = new Thread(() -> RedisHandler.subscribe(pubSub, namespacedChannels));
         redisListenerThread.start();
 
-        getProxy().getPluginManager().registerCommand(this, new SyncCommand());
+        proxy.getPluginManager().registerCommand(this, new CommandHelper());
         logger.info("SyncCommand has started successfully!");
     }
 
@@ -73,13 +72,5 @@ public class SyncCommandBungee extends Plugin implements Listener {
 
         RedisHandler.disconnect();
         logger.info("SyncCommand has shut down successfully!");
-    }
-
-    public void saveDefaultConfig() {
-        configHelper.saveDefaultConfig();
-    }
-
-    public Configuration getConfig() { // Return type is BungeeCord's Configuration
-        return configHelper.getConfig();
     }
 }

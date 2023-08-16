@@ -1,24 +1,30 @@
 package org.me.synccommand.bukkit;
 
+import org.me.synccommand.shared.ConfigHelper;
 import org.me.synccommand.shared.RedisHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import redis.clients.jedis.JedisPubSub;
 import java.util.List;
+import java.util.Objects;
+import java.util.logging.Logger;
 
 public class SyncCommandBukkit extends JavaPlugin {
 
+    private Logger logger;
+    private ConfigHelper configHelper;
     private JedisPubSub pubSub;
     private Thread redisListenerThread;
 
     @Override
     public void onEnable() {
-        saveDefaultConfig();
+        logger = getLogger();
+        configHelper = new ConfigHelper(logger);
 
-        String host = getConfig().getString("redisHost");
-        int port = getConfig().getInt("redisPort");
-        String password = getConfig().getString("redisPassword");
-        List<String> originalChannels = getConfig().getStringList("channels");
+        String host = configHelper.getRedisHost();
+        int port = configHelper.getRedisPort();
+        String password = configHelper.getRedisPassword();
+        List<String> originalChannels = configHelper.getChannels();
         String[] namespacedChannels = originalChannels.stream()
                 .map(channel -> "synccommand." + channel)
                 .toArray(String[]::new);
@@ -26,7 +32,7 @@ public class SyncCommandBukkit extends JavaPlugin {
         try {
             RedisHandler.connect(host, port, password);
         } catch (Exception e) {
-            getLogger().warning("Failed to connect to Redis. Disabling plugin.");
+            logger.warning("Failed to connect to Redis. Disabling plugin.");
             e.printStackTrace();
             return;
         }
@@ -41,12 +47,12 @@ public class SyncCommandBukkit extends JavaPlugin {
         redisListenerThread = new Thread(() -> RedisHandler.subscribe(pubSub, namespacedChannels));
         redisListenerThread.start();
 
-        this.getCommand("sync").setExecutor(new SyncCommand());
+        Objects.requireNonNull(this.getCommand("sync")).setExecutor(new CommandHelper());
     }
 
     @Override
     public void onDisable() {
-        getLogger().info("SyncCommand is shutting down...");
+        logger.info("SyncCommand is shutting down...");
         if (pubSub != null) {
             pubSub.unsubscribe();
         }
@@ -61,6 +67,6 @@ public class SyncCommandBukkit extends JavaPlugin {
         }
 
         RedisHandler.disconnect();
-        getLogger().info("SyncCommand has shut down successfully!");
+        logger.info("SyncCommand has shut down successfully!");
     }
 }

@@ -5,9 +5,9 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.plugin.Command;
 import org.me.synccommand.shared.RedisHandler;
 
-public class SyncCommand extends Command {
+public class CommandHelper extends net.md_5.bungee.api.plugin.Command {
 
-    public SyncCommand() {
+    public CommandHelper() {
         super("syncb");
     }
 
