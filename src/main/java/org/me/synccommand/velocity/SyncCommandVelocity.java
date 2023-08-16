@@ -41,7 +41,7 @@ public class SyncCommandVelocity {
         redisPubSub = new RedisPubSub(logger, configHelper, new VelocityConsoleCommand(proxy));
         redisPubSub.init();
         proxy.getCommandManager().register("syncv", new SyncCommandSync(configHelper));
-        proxy.getCommandManager().register("syncv", new SyncCommandReload(this, configHelper));
+        proxy.getCommandManager().register("syncvreload", new SyncCommandReload(this, configHelper));
     }
 
     @Subscribe

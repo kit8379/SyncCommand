@@ -13,7 +13,7 @@ public class SyncCommandReload extends Command {
     private final ConfigHelper config;
 
     public SyncCommandReload(SyncCommandBungee plugin, ConfigHelper config) {
-        super("syncb");
+        super("syncbreload");
         this.plugin = plugin;
         this.config = config;
     }
