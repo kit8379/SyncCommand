@@ -53,7 +53,7 @@ public class RedisPubSub {
         if (redisListenerThread != null) {
             redisListenerThread.interrupt();
             try {
-                redisListenerThread.join(); // Ensure thread termination
+                redisListenerThread.join();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

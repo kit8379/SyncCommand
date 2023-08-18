@@ -10,20 +10,17 @@ public class RedisHandler {
     private static JedisPool pool;
 
     public static void connect(String host, int port, String password) {
-        pool = new JedisPool(new JedisPoolConfig(), host, port);
-        try {
-            jedis = pool.getResource();
-            if (password != null && !password.isEmpty()) {
-                jedis.auth(password);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        JedisPoolConfig poolConfig = new JedisPoolConfig();
+
+        if (password != null && !password.isEmpty()) {
+            pool = new JedisPool(poolConfig, host, port, 2000, password);
+        } else {
+            pool = new JedisPool(poolConfig, host, port, 2000);
         }
     }
 
     public static void publish(String channel, String message) {
-        try {
-            jedis = pool.getResource();
+        try (Jedis jedis = pool.getResource()) {
             jedis.publish(channel, message);
         } catch (Exception e) {
             e.printStackTrace();
@@ -31,8 +28,7 @@ public class RedisHandler {
     }
 
     public static void subscribe(JedisPubSub pubSub, String... channels) {
-        try {
-            jedis = pool.getResource();
+        try (Jedis jedis = pool.getResource()) {
             jedis.subscribe(pubSub, channels);
         } catch (Exception e) {
             e.printStackTrace();
