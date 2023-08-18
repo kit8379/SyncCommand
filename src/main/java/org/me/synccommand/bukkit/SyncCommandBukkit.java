@@ -12,11 +12,13 @@ import java.util.logging.Logger;
 
 public class SyncCommandBukkit extends JavaPlugin {
 
+    private static SyncCommandBukkit instance;
     private Logger logger;
     private RedisPubSub redisPubSub;
 
     @Override
     public void onEnable() {
+        instance = this;
         logger = getLogger();
         logger.info("SyncCommand is starting up...");
         initialize();
@@ -48,5 +50,9 @@ public class SyncCommandBukkit extends JavaPlugin {
         shutdown();
         initialize();
         logger.info("SyncCommand has reloaded successfully!");
+    }
+
+    public static SyncCommandBukkit getInstance() {
+        return instance;
     }
 }

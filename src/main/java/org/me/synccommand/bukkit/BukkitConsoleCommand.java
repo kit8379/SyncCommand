@@ -12,6 +12,8 @@ public class BukkitConsoleCommand implements ConsoleCommand {
      */
     @Override
     public void executeCommand(String command) {
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+        Bukkit.getScheduler().runTask(SyncCommandBukkit.getInstance(), () -> {
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+        });
     }
 }
