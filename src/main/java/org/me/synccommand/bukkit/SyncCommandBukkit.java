@@ -2,7 +2,6 @@ package org.me.synccommand.bukkit;
 
 import org.me.synccommand.bukkit.command.SyncCommandReload;
 import org.me.synccommand.bukkit.command.SyncCommandSync;
-import org.me.synccommand.shared.ConfigHelper;
 import org.me.synccommand.shared.RedisPubSub;
 
 import org.bukkit.plugin.java.JavaPlugin;
@@ -26,9 +25,9 @@ public class SyncCommandBukkit extends JavaPlugin {
     }
 
     public void initialize() {
-        ConfigHelper configHelper = new ConfigHelper(logger);
-        configHelper.loadConfiguration();
-        redisPubSub = new RedisPubSub(logger, configHelper, new BukkitConsoleCommand());
+        saveDefaultConfig();
+        ConfigHelper configHelper = new ConfigHelper(this);
+        redisPubSub = new RedisPubSub(logger, new BukkitConsoleCommand(), configHelper.getRedisHost(), configHelper.getRedisPort(), configHelper.getRedisPassword(), configHelper.getChannels());
         redisPubSub.init();
         Objects.requireNonNull(this.getCommand("sync")).setExecutor(new SyncCommandSync(configHelper));
         Objects.requireNonNull(this.getCommand("syncreload")).setExecutor(new SyncCommandReload(this, configHelper));
@@ -48,6 +47,7 @@ public class SyncCommandBukkit extends JavaPlugin {
     public void reload() {
         logger.info("SyncCommand is reloading...");
         shutdown();
+        reloadConfig();
         initialize();
         logger.info("SyncCommand has reloaded successfully!");
     }

@@ -1,5 +1,6 @@
 package org.me.synccommand.bungee;
 
+import org.me.synccommand.bukkit.BukkitConsoleCommand;
 import org.me.synccommand.bungee.command.SyncCommandReload;
 import org.me.synccommand.bungee.command.SyncCommandSync;
 import org.me.synccommand.shared.ConfigHelper;
@@ -29,7 +30,7 @@ public class SyncCommandBungee extends Plugin implements Listener {
     public void initialize() {
         ConfigHelper configHelper = new ConfigHelper(logger);
         configHelper.loadConfiguration();
-        redisPubSub = new RedisPubSub(logger, configHelper, new BungeeConsoleCommand(proxy));
+        redisPubSub = new RedisPubSub(logger, new BungeeConsoleCommand(proxy), configHelper.getRedisHost(), configHelper.getRedisPort(), configHelper.getRedisPassword(), configHelper.getChannels());
         redisPubSub.init();
         proxy.getPluginManager().registerCommand(this, new SyncCommandSync(configHelper));
         proxy.getPluginManager().registerCommand(this, new SyncCommandReload(this, configHelper));

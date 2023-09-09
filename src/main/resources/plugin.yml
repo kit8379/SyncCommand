@@ -3,7 +3,6 @@ version: ${project.version}
 api-version: 1.19
 main: org.me.synccommand.bukkit.SyncCommandBukkit
 author: kit8379
-folia-support: true
 commands:
   sync:
     description: Allows the user to synchronize a command across multiple servers.

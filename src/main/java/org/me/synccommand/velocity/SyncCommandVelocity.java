@@ -38,7 +38,7 @@ public class SyncCommandVelocity {
     public void initialize() {
         ConfigHelper configHelper = new ConfigHelper(logger);
         configHelper.loadConfiguration();
-        redisPubSub = new RedisPubSub(logger, configHelper, new VelocityConsoleCommand(proxy));
+        redisPubSub = new RedisPubSub(logger, new VelocityConsoleCommand(proxy), configHelper.getRedisHost(), configHelper.getRedisPort(), configHelper.getRedisPassword(), configHelper.getChannels());
         redisPubSub.init();
         proxy.getCommandManager().register("syncv", new SyncCommandSync(configHelper));
         proxy.getCommandManager().register("syncvreload", new SyncCommandReload(this, configHelper));

@@ -8,23 +8,25 @@ import java.util.logging.Logger;
 public class RedisPubSub {
 
     private final Logger logger;
-    private final ConfigHelper configHelper;
     private final ConsoleCommand consoleCommand;
     private JedisPubSub pubSub;
     private Thread redisListenerThread;
+    private final String host;
+    private final int port;
+    private final String password;
+    private final List<String> channels;
 
-    public RedisPubSub(Logger logger, ConfigHelper configHelper, ConsoleCommand consoleCommand) {
+    public RedisPubSub(Logger logger, ConsoleCommand consoleCommand, String host, int port, String password, List<String> channels) {
         this.logger = logger;
-        this.configHelper = configHelper;
         this.consoleCommand = consoleCommand;
+        this.host = host;
+        this.port = port;
+        this.password = password;
+        this.channels = channels;
     }
 
     public void init() {
-        String host = configHelper.getRedisHost();
-        int port = configHelper.getRedisPort();
-        String password = configHelper.getRedisPassword();
-        List<String> originalChannels = configHelper.getChannels();
-        String[] namespacedChannels = originalChannels.toArray(String[]::new);
+        String[] namespacedChannels = channels.toArray(String[]::new);
 
         try {
             RedisHandler.connect(host, port, password);

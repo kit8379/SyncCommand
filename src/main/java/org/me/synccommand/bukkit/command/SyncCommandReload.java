@@ -1,7 +1,7 @@
 package org.me.synccommand.bukkit.command;
 
 import org.me.synccommand.bukkit.SyncCommandBukkit;
-import org.me.synccommand.shared.ConfigHelper;
+import org.me.synccommand.bukkit.ConfigHelper;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
