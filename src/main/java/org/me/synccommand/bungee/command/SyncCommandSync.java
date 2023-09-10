@@ -1,7 +1,7 @@
 package org.me.synccommand.bungee.command;
 
 import org.me.synccommand.shared.ConfigHelper;
-import org.me.synccommand.shared.RedisHandler;
+import org.me.synccommand.shared.redis.RedisHandler;
 
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;

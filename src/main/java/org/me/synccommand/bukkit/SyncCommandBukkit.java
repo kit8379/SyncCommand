@@ -2,7 +2,7 @@ package org.me.synccommand.bukkit;
 
 import org.me.synccommand.bukkit.command.SyncCommandReload;
 import org.me.synccommand.bukkit.command.SyncCommandSync;
-import org.me.synccommand.shared.RedisPubSub;
+import org.me.synccommand.shared.redis.RedisPubSub;
 
 import org.bukkit.plugin.java.JavaPlugin;
 

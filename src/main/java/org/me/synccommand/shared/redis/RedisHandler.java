@@ -1,4 +1,4 @@
-package org.me.synccommand.shared;
+package org.me.synccommand.shared.redis;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;

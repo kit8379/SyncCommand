@@ -1,5 +1,6 @@
-package org.me.synccommand.shared;
+package org.me.synccommand.shared.redis;
 
+import org.me.synccommand.shared.ConsoleCommand;
 import redis.clients.jedis.JedisPubSub;
 
 import java.util.List;

@@ -1,7 +1,7 @@
 package org.me.synccommand.bukkit.command;
 
 import org.me.synccommand.bukkit.ConfigHelper;
-import org.me.synccommand.shared.RedisHandler;
+import org.me.synccommand.shared.redis.RedisHandler;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

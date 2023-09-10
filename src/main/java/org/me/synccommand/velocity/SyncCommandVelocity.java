@@ -1,7 +1,7 @@
 package org.me.synccommand.velocity;
 
 import org.me.synccommand.shared.ConfigHelper;
-import org.me.synccommand.shared.RedisPubSub;
+import org.me.synccommand.shared.redis.RedisPubSub;
 import org.me.synccommand.velocity.command.SyncCommandReload;
 import org.me.synccommand.velocity.command.SyncCommandSync;
 

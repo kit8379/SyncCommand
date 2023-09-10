@@ -1,7 +1,7 @@
 package org.me.synccommand.velocity.command;
 
 import org.me.synccommand.shared.ConfigHelper;
-import org.me.synccommand.shared.RedisHandler;
+import org.me.synccommand.shared.redis.RedisHandler;
 
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;

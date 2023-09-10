@@ -1,10 +1,9 @@
 package org.me.synccommand.bungee;
 
-import org.me.synccommand.bukkit.BukkitConsoleCommand;
 import org.me.synccommand.bungee.command.SyncCommandReload;
 import org.me.synccommand.bungee.command.SyncCommandSync;
 import org.me.synccommand.shared.ConfigHelper;
-import org.me.synccommand.shared.RedisPubSub;
+import org.me.synccommand.shared.redis.RedisPubSub;
 
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Listener;
