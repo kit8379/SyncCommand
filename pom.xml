@@ -12,12 +12,12 @@
     <name>SyncCommand</name>
 
     <properties>
-        <finalName>${project.artifactId}</finalName>
         <java.version>11</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <build>
+        <finalName>${project.artifactId}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
