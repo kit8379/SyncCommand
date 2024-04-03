@@ -12,6 +12,7 @@
     <name>SyncCommand</name>
 
     <properties>
+        <finalName>${project.artifactId}</finalName>
         <java.version>11</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -84,7 +85,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.20.1-R0.1-SNAPSHOT</version>
+            <version>1.20.4-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -108,7 +109,7 @@
         <dependency>
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
-            <version>4.4.3</version>
+            <version>5.1.2</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
