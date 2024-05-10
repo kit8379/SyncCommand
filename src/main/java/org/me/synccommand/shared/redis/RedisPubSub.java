@@ -4,18 +4,18 @@ import org.me.synccommand.shared.ConsoleCommand;
 import redis.clients.jedis.JedisPubSub;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
 
 public class RedisPubSub {
 
     private final Logger logger;
     private final ConsoleCommand consoleCommand;
+    private JedisPubSub pubSub;
+    private Thread redisListenerThread;
     private final String host;
     private final int port;
     private final String password;
     private final List<String> channels;
-    private JedisPubSub pubSub;
 
     public RedisPubSub(Logger logger, ConsoleCommand consoleCommand, String host, int port, String password, List<String> channels) {
         this.logger = logger;
@@ -43,12 +43,23 @@ public class RedisPubSub {
                 consoleCommand.executeCommand(message);
             }
         };
-        RedisHandler.subscribe(pubSub, namespacedChannels);
+
+        redisListenerThread = new Thread(() -> RedisHandler.subscribe(pubSub, namespacedChannels));
+        redisListenerThread.start();
     }
 
     public void shut() {
         if (pubSub != null) {
             pubSub.unsubscribe();
+        }
+
+        if (redisListenerThread != null) {
+            redisListenerThread.interrupt();
+            try {
+                redisListenerThread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
         RedisHandler.disconnect();

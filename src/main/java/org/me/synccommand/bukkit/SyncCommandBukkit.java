@@ -1,9 +1,10 @@
 package org.me.synccommand.bukkit;
 
-import org.bukkit.plugin.java.JavaPlugin;
 import org.me.synccommand.bukkit.command.SyncCommandReload;
 import org.me.synccommand.bukkit.command.SyncCommandSync;
 import org.me.synccommand.shared.redis.RedisPubSub;
+
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Objects;
 import java.util.logging.Logger;
@@ -13,10 +14,6 @@ public class SyncCommandBukkit extends JavaPlugin {
     private static SyncCommandBukkit instance;
     private Logger logger;
     private RedisPubSub redisPubSub;
-
-    public static SyncCommandBukkit getInstance() {
-        return instance;
-    }
 
     @Override
     public void onEnable() {
@@ -53,5 +50,9 @@ public class SyncCommandBukkit extends JavaPlugin {
         reloadConfig();
         initialize();
         logger.info("SyncCommand has reloaded successfully!");
+    }
+
+    public static SyncCommandBukkit getInstance() {
+        return instance;
     }
 }
