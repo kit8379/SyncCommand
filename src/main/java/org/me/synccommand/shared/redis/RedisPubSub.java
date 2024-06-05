@@ -10,12 +10,12 @@ public class RedisPubSub {
 
     private final Logger logger;
     private final ConsoleCommand consoleCommand;
-    private JedisPubSub pubSub;
-    private Thread redisListenerThread;
     private final String host;
     private final int port;
     private final String password;
     private final List<String> channels;
+    private JedisPubSub pubSub;
+    private Thread redisListenerThread;
 
     public RedisPubSub(Logger logger, ConsoleCommand consoleCommand, String host, int port, String password, List<String> channels) {
         this.logger = logger;
