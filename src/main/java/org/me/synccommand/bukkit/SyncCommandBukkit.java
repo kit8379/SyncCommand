@@ -1,23 +1,20 @@
 package org.me.synccommand.bukkit;
 
+import org.bukkit.plugin.java.JavaPlugin;
 import org.me.synccommand.bukkit.command.SyncCommandReload;
 import org.me.synccommand.bukkit.command.SyncCommandSync;
 import org.me.synccommand.shared.redis.RedisPubSub;
-
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Objects;
 import java.util.logging.Logger;
 
 public class SyncCommandBukkit extends JavaPlugin {
 
-    private static SyncCommandBukkit instance;
     private Logger logger;
     private RedisPubSub redisPubSub;
 
     @Override
     public void onEnable() {
-        instance = this;
         logger = getLogger();
         logger.info("SyncCommand is starting up...");
         initialize();
@@ -27,7 +24,7 @@ public class SyncCommandBukkit extends JavaPlugin {
     public void initialize() {
         saveDefaultConfig();
         ConfigHelper configHelper = new ConfigHelper(this);
-        redisPubSub = new RedisPubSub(logger, new BukkitConsoleCommand(), configHelper.getRedisHost(), configHelper.getRedisPort(), configHelper.getRedisPassword(), configHelper.getChannels());
+        redisPubSub = new RedisPubSub(logger, new BukkitConsoleCommand(this), configHelper.getRedisHost(), configHelper.getRedisPort(), configHelper.getRedisPassword(), configHelper.getChannels());
         redisPubSub.init();
         Objects.requireNonNull(this.getCommand("sync")).setExecutor(new SyncCommandSync(configHelper));
         Objects.requireNonNull(this.getCommand("syncreload")).setExecutor(new SyncCommandReload(this, configHelper));
@@ -50,9 +47,5 @@ public class SyncCommandBukkit extends JavaPlugin {
         reloadConfig();
         initialize();
         logger.info("SyncCommand has reloaded successfully!");
-    }
-
-    public static SyncCommandBukkit getInstance() {
-        return instance;
     }
 }

@@ -1,8 +1,7 @@
 package org.me.synccommand.velocity;
 
-import org.me.synccommand.shared.ConsoleCommand;
-
 import com.velocitypowered.api.proxy.ProxyServer;
+import org.me.synccommand.shared.ConsoleCommand;
 
 public class VelocityConsoleCommand implements ConsoleCommand {
 
@@ -14,6 +13,7 @@ public class VelocityConsoleCommand implements ConsoleCommand {
 
     /**
      * Execute a command as the console.
+     *
      * @param command The command string to execute.
      */
     @Override

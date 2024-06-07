@@ -1,5 +1,6 @@
 package org.me.synccommand.bukkit.command;
 
+import org.jetbrains.annotations.NotNull;
 import org.me.synccommand.bukkit.SyncCommandBukkit;
 import org.me.synccommand.bukkit.ConfigHelper;
 
@@ -18,7 +19,7 @@ public class SyncCommandReload implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         if (!sender.hasPermission("synccommand.admin")) {
             sender.sendMessage(config.getNoPermissionMessage());
             return true;
