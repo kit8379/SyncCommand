@@ -1,17 +1,22 @@
 package org.me.synccommand.velocity.command;
 
-import org.me.synccommand.shared.ConfigHelper;
-import org.me.synccommand.shared.redis.RedisHandler;
-
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
+import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.adventure.text.Component;
+import org.me.synccommand.shared.ConfigHelper;
+import org.me.synccommand.shared.redis.RedisHandler;
+import org.me.synccommand.velocity.SyncCommandVelocity;
 
 public class SyncCommandSync implements SimpleCommand {
 
+    private final SyncCommandVelocity plugin;
+    private final ProxyServer proxy;
     private final ConfigHelper config;
 
-    public SyncCommandSync(ConfigHelper config) {
+    public SyncCommandSync(SyncCommandVelocity plugin, ProxyServer proxy, ConfigHelper config) {
+        this.plugin = plugin;
+        this.proxy = proxy;
         this.config = config;
     }
 
@@ -33,7 +38,8 @@ public class SyncCommandSync implements SimpleCommand {
         String channel = args[0];
         String command = String.join(" ", args).substring(channel.length()).trim();
 
-        RedisHandler.publish(channel, command);
+        proxy.getScheduler().buildTask(plugin, () -> RedisHandler.publish(channel, command)).schedule();
+
         source.sendMessage(Component.text(config.getCommandSyncedMessage(channel)));
     }
 }

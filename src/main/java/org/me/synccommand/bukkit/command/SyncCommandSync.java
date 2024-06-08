@@ -1,22 +1,26 @@
 package org.me.synccommand.bukkit.command;
 
-import org.me.synccommand.bukkit.ConfigHelper;
-import org.me.synccommand.shared.redis.RedisHandler;
-
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
+import org.me.synccommand.bukkit.ConfigHelper;
+import org.me.synccommand.bukkit.SyncCommandBukkit;
+import org.me.synccommand.shared.redis.RedisHandler;
 
 public class SyncCommandSync implements CommandExecutor {
 
+    private final SyncCommandBukkit plugin;
     private final ConfigHelper config;
 
-    public SyncCommandSync(ConfigHelper config) {
+    public SyncCommandSync(SyncCommandBukkit plugin, ConfigHelper config) {
+        this.plugin = plugin;
         this.config = config;
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         if (!sender.hasPermission("synccommand.admin")) {
             sender.sendMessage(config.getNoPermissionMessage());
             return true;
@@ -30,7 +34,8 @@ public class SyncCommandSync implements CommandExecutor {
         String channel = args[0];
         String syncCommand = String.join(" ", args).substring(channel.length()).trim();
 
-        RedisHandler.publish(channel, syncCommand);
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> RedisHandler.publish(channel, syncCommand));
+
         sender.sendMessage(config.getCommandSyncedMessage(channel));
         return true;
     }

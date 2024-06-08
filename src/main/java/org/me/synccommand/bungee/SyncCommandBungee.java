@@ -1,13 +1,13 @@
 package org.me.synccommand.bungee;
 
-import org.me.synccommand.bungee.command.SyncCommandReload;
-import org.me.synccommand.bungee.command.SyncCommandSync;
-import org.me.synccommand.shared.ConfigHelper;
-import org.me.synccommand.shared.redis.RedisPubSub;
-
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
+import org.me.synccommand.bungee.command.SyncCommandReload;
+import org.me.synccommand.bungee.command.SyncCommandSync;
+import org.me.synccommand.shared.ConfigHelper;
+import org.me.synccommand.shared.redis.RedisHandler;
+import org.me.synccommand.shared.redis.RedisPubSub;
 
 import java.util.logging.Logger;
 
@@ -29,9 +29,33 @@ public class SyncCommandBungee extends Plugin implements Listener {
     public void initialize() {
         ConfigHelper configHelper = new ConfigHelper(logger);
         configHelper.loadConfiguration();
-        redisPubSub = new RedisPubSub(logger, new BungeeConsoleCommand(proxy), configHelper.getRedisHost(), configHelper.getRedisPort(), configHelper.getRedisPassword(), configHelper.getChannels());
-        redisPubSub.init();
-        proxy.getPluginManager().registerCommand(this, new SyncCommandSync(configHelper));
+
+        // Connect to Redis
+        try {
+            RedisHandler.connect(configHelper.getRedisHost(), configHelper.getRedisPort(), configHelper.getRedisPassword());
+            logger.info("Connected to Redis.");
+        } catch (Exception e) {
+            logger.warning("Failed to connect to Redis.");
+            e.printStackTrace();
+            return;
+        }
+
+        // Initialize Redis PubSub
+        try {
+            redisPubSub = new RedisPubSub(logger, new BungeeConsoleCommand(proxy));
+            redisPubSub.init();
+            logger.info("Initialized Redis PubSub.");
+        } catch (Exception e) {
+            logger.warning("Failed to initialize Redis PubSub.");
+            e.printStackTrace();
+            return;
+        }
+
+        // Schedule Redis subscription
+        proxy.getScheduler().runAsync(this, () -> RedisHandler.subscribe(redisPubSub.getPubSub(), configHelper.getChannels().toArray(new String[0])));
+
+        // Register commands
+        proxy.getPluginManager().registerCommand(this, new SyncCommandSync(this, proxy, configHelper));
         proxy.getPluginManager().registerCommand(this, new SyncCommandReload(this, configHelper));
     }
 
@@ -43,7 +67,12 @@ public class SyncCommandBungee extends Plugin implements Listener {
     }
 
     public void shutdown() {
-        redisPubSub.shut();
+        if (redisPubSub != null) {
+            redisPubSub.shut();
+            logger.info("Redis PubSub has been shut down.");
+        }
+        RedisHandler.disconnect();
+        logger.info("Disconnected from Redis.");
     }
 
     public void reload() {

@@ -6,7 +6,6 @@ import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.JedisPubSub;
 
 public class RedisHandler {
-    private static Jedis jedis;
     private static JedisPool pool;
 
     public static void connect(String host, int port, String password) {
@@ -36,7 +35,8 @@ public class RedisHandler {
     }
 
     public static void disconnect() {
-        pool.close();
+        if (pool != null) {
+            pool.close();
+        }
     }
 }
-
