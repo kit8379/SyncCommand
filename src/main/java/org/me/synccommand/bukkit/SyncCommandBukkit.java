@@ -1,5 +1,6 @@
 package org.me.synccommand.bukkit;
 
+import io.papermc.paper.threadedregions.scheduler.GlobalRegionScheduler;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.me.synccommand.bukkit.command.SyncCommandReload;
@@ -52,6 +53,8 @@ public class SyncCommandBukkit extends JavaPlugin {
         // Schedule Redis subscription
         if (isFolia()) {
             // Use Folia Region Thread Pool
+            GlobalRegionScheduler globalRegionScheduler = Bukkit.getGlobalRegionScheduler();
+            globalRegionScheduler.run(this, task -> RedisHandler.subscribe(redisPubSub.getPubSub(), namespacedChannels));
         } else {
             // Use Bukkit Async Thread Pool
             Bukkit.getScheduler().runTaskAsynchronously(this, () -> RedisHandler.subscribe(redisPubSub.getPubSub(), namespacedChannels));
