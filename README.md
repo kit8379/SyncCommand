@@ -1,4 +1,5 @@
-🚀 SyncCommand 🚀
+<h1 align="center">🚀 SyncCommand 🚀</h1>
+<div align="center"></div>
 
 SyncCommand - the ultimate command bridge between multiple servers! Ever wished you could sync a command across multiple servers in a heartbeat? Now you can! Powered by the blazing fast Redis, SyncCommand delivers that promise.
 

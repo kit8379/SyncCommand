@@ -1,5 +1,6 @@
 package org.me.synccommand.bukkit;
 
+import com.tcoded.folialib.wrapper.task.WrappedTask;
 import org.bukkit.Bukkit;
 import org.me.synccommand.shared.ConsoleCommand;
 
@@ -18,8 +19,6 @@ public class BukkitConsoleCommand implements ConsoleCommand {
      */
     @Override
     public void executeCommand(String command) {
-        Bukkit.getScheduler().runTask(plugin, () -> {
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
-        });
+        plugin.getFoliaLib().getImpl().runNextTick((WrappedTask task) -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command));
     }
 }

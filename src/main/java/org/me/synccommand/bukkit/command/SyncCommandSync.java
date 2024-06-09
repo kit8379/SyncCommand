@@ -1,6 +1,6 @@
 package org.me.synccommand.bukkit.command;
 
-import org.bukkit.Bukkit;
+import com.tcoded.folialib.wrapper.task.WrappedTask;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -34,7 +34,8 @@ public class SyncCommandSync implements CommandExecutor {
         String channel = args[0];
         String syncCommand = String.join(" ", args).substring(channel.length()).trim();
 
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> RedisHandler.publish(channel, syncCommand));
+        // Schedule Redis publish
+        plugin.getFoliaLib().getImpl().runAsync((WrappedTask task) -> RedisHandler.publish(channel, syncCommand));
 
         sender.sendMessage(config.getCommandSyncedMessage(channel));
         return true;
