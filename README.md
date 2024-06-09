@@ -51,13 +51,26 @@ messages:
     
 💬 Commands 💬
 
+    Bukkit:
     /sync [channel] [command]: 🌉 Sync your commands to the specified channel
         permission → synccommand.admin
-        Try this: /sync all tp @a 100 64 100
 
-    /syncreload: 🔄 Spin the wheel, reload the plugin
+    /syncreload: 🔄 Reload the plugin
         Permission → synccommand.admin
 
+    Bungee:
+    /syncb <channel> <command>: 🌉 Sync your commands to the specified channel
+        permission → synccommand.admin
+    
+    /syncbreload: 🔄 Reload the plugin
+        Permission → synccommand.admin
+
+    Velocity:
+    /syncv <channel> <command>: 🌉 Sync your commands to the specified channel
+        permission → synccommand.admin
+    
+    /syncvreload: 🔄 Reload the plugin
+        Permission → synccommand.admin
 🔐 Permissions 🔐
 
     synccommand.admin: The golden key. Unlocks the world of SyncCommand.
