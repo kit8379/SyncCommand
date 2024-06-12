@@ -42,15 +42,15 @@
                             <relocations>
                                 <relocation>
                                     <pattern>com.tcoded</pattern>
-                                    <shadedPattern>org.me.shaded.com.tcoded</shadedPattern>
+                                    <shadedPattern>org.me.synccommand.shaded.com.tcoded</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>org.spongepowered</pattern>
-                                    <shadedPattern>org.me.shaded.org.spongepowered</shadedPattern>
+                                    <shadedPattern>org.me.synccommand.shaded.org.spongepowered</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>redis.clients</pattern>
-                                    <shadedPattern>org.me.shaded.redis.clients</shadedPattern>
+                                    <shadedPattern>org.me.synccommand.shaded.redis.clients</shadedPattern>
                                 </relocation>
                             </relocations>
                             <filters>
