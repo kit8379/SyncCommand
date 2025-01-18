@@ -54,7 +54,7 @@ public class SyncCommandBukkit extends JavaPlugin {
         }
 
         // Schedule Redis subscription
-        foliaLib.getImpl().runAsync((WrappedTask task) -> RedisHandler.subscribe(redisPubSub.getPubSub(), namespacedChannels));
+        foliaLib.getScheduler().runAsync((WrappedTask task) -> RedisHandler.subscribe(redisPubSub.getPubSub(), namespacedChannels));
 
         // Register commands
         Objects.requireNonNull(this.getCommand("sync")).setExecutor(new SyncCommandSync(this, configHelper));
@@ -70,6 +70,9 @@ public class SyncCommandBukkit extends JavaPlugin {
     }
 
     public void shutdown() {
+        // Cancel any pending FoliaLib tasks
+        foliaLib.getScheduler().cancelAllTasks();
+
         if (redisPubSub != null) {
             redisPubSub.shut();
             logger.info("Redis PubSub has been shut down.");
