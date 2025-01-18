@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project
+        xmlns="http://maven.apache.org/POM/4.0.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                            http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.me</groupId>
@@ -12,13 +15,14 @@
     <name>SyncCommand</name>
 
     <properties>
-        <java.version>17</java.version>
+        <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <build>
         <finalName>${project.artifactId}</finalName>
         <plugins>
+            <!-- Compiler Plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -27,6 +31,8 @@
                     <release>${java.version}</release>
                 </configuration>
             </plugin>
+
+            <!-- Shade Plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -38,12 +44,10 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                            <!-- Do not generate a dependency-reduced POM -->
                             <createDependencyReducedPom>false</createDependencyReducedPom>
+
                             <relocations>
-                                <relocation>
-                                    <pattern>com.tcoded</pattern>
-                                    <shadedPattern>org.me.synccommand.shaded.com.tcoded</shadedPattern>
-                                </relocation>
                                 <relocation>
                                     <pattern>org.spongepowered</pattern>
                                     <shadedPattern>org.me.synccommand.shaded.org.spongepowered</shadedPattern>
@@ -52,7 +56,13 @@
                                     <pattern>redis.clients</pattern>
                                     <shadedPattern>org.me.synccommand.shaded.redis.clients</shadedPattern>
                                 </relocation>
+                                <relocation>
+                                    <pattern>com.tcoded.folialib</pattern>
+                                    <shadedPattern>org.me.synccommand.shaded.com.tcoded.folialib</shadedPattern>
+                                </relocation>
                             </relocations>
+
+                            <!-- Filters -->
                             <filters>
                                 <filter>
                                     <artifact>*:*</artifact>
@@ -67,6 +77,7 @@
                 </executions>
             </plugin>
         </plugins>
+
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -93,46 +104,64 @@
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </repository>
         <repository>
-            <id>devmart-other</id>
-            <url>https://nexuslite.gcnt.net/repos/other/</url>
+            <id>jitpack</id>
+            <url>https://jitpack.io</url>
         </repository>
     </repositories>
 
     <dependencies>
         <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>24.0.1</version> <!-- Use the latest version -->
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- Spigot API -->
+        <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.20.1-R0.1-SNAPSHOT</version>
+            <version>1.21.4-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- Velocity API -->
         <dependency>
             <groupId>com.velocitypowered</groupId>
             <artifactId>velocity-api</artifactId>
             <version>3.2.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- BungeeCord API -->
         <dependency>
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-api</artifactId>
-            <version>1.20-R0.1-SNAPSHOT</version>
+            <version>1.21-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- Configurate (YAML) -->
         <dependency>
             <groupId>org.spongepowered</groupId>
             <artifactId>configurate-yaml</artifactId>
             <version>4.1.2</version>
             <scope>compile</scope>
         </dependency>
+
+        <!-- Jedis -->
         <dependency>
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
-            <version>5.1.2</version>
+            <version>5.2.0</version>
             <scope>compile</scope>
         </dependency>
+
+        <!-- FoliaLib -->
         <dependency>
-            <groupId>com.tcoded</groupId>
+            <groupId>com.github.technicallycoded</groupId>
             <artifactId>FoliaLib</artifactId>
-            <version>0.3.1</version>
+            <version>main-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
