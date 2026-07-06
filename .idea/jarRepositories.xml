@@ -12,16 +12,6 @@
       <option name="url" value="https://oss.sonatype.org/content/groups/public/" />
     </remote-repository>
     <remote-repository>
-      <option name="id" value="AlessioDP" />
-      <option name="name" value="AlessioDP" />
-      <option name="url" value="https://repo.alessiodp.com/releases/" />
-    </remote-repository>
-    <remote-repository>
-      <option name="id" value="spigotmc-repo" />
-      <option name="name" value="spigotmc-repo" />
-      <option name="url" value="https://hub.spigotmc.org/nexus/content/repositories/snapshots/" />
-    </remote-repository>
-    <remote-repository>
       <option name="id" value="papermc-repo" />
       <option name="name" value="papermc-repo" />
       <option name="url" value="https://repo.papermc.io/repository/maven-public/" />
@@ -37,6 +27,31 @@
       <option name="url" value="https://repo1.maven.org/maven2" />
     </remote-repository>
     <remote-repository>
+      <option name="id" value="papermc" />
+      <option name="name" value="papermc" />
+      <option name="url" value="https://repo.papermc.io/repository/maven-public/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="AlessioDP" />
+      <option name="name" value="AlessioDP" />
+      <option name="url" value="https://repo.alessiodp.com/releases/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="spigotmc-repo" />
+      <option name="name" value="spigotmc-repo" />
+      <option name="url" value="https://hub.spigotmc.org/nexus/content/groups/public/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="tcoded-releases" />
+      <option name="name" value="tcoded-releases" />
+      <option name="url" value="https://repo.tcoded.com/releases" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="spigotmc-repo" />
+      <option name="name" value="spigotmc-repo" />
+      <option name="url" value="https://hub.spigotmc.org/nexus/content/repositories/snapshots/" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="jboss.community" />
       <option name="name" value="JBoss Community repository" />
       <option name="url" value="https://repository.jboss.org/nexus/content/repositories/public/" />
@@ -50,11 +65,6 @@
       <option name="id" value="devmart-other" />
       <option name="name" value="devmart-other" />
       <option name="url" value="https://nexuslite.gcnt.net/repos/other/" />
-    </remote-repository>
-    <remote-repository>
-      <option name="id" value="papermc" />
-      <option name="name" value="papermc" />
-      <option name="url" value="https://repo.papermc.io/repository/maven-public/" />
     </remote-repository>
   </component>
 </project>

@@ -3,7 +3,7 @@
         xmlns="http://maven.apache.org/POM/4.0.0"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-                            http://maven.apache.org/xsd/maven-4.0.0.xsd">
+                            https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -17,18 +17,41 @@
     <properties>
         <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <spigot.version>26.2-R0.1-SNAPSHOT</spigot.version>
+        <velocity.version>3.5.0-SNAPSHOT</velocity.version>
+        <bungeecord.version>1.21-R0.4</bungeecord.version>
+
+        <annotations.version>26.1.0</annotations.version>
+        <configurate.version>4.2.0</configurate.version>
+        <jedis.version>7.5.3</jedis.version>
+        <folialib.version>0.5.1</folialib.version>
+
+        <maven.compiler.plugin.version>3.15.0</maven.compiler.plugin.version>
+        <maven.shade.plugin.version>3.6.2</maven.shade.plugin.version>
     </properties>
 
     <build>
         <finalName>${project.artifactId}</finalName>
+
         <plugins>
             <!-- Compiler Plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.13.0</version>
+                <version>${maven.compiler.plugin.version}</version>
                 <configuration>
                     <release>${java.version}</release>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+
+                    <!-- Required for Velocity @Plugin annotation processing -->
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>com.velocitypowered</groupId>
+                            <artifactId>velocity-api</artifactId>
+                            <version>${velocity.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
 
@@ -36,9 +59,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.6.0</version>
+                <version>${maven.shade.plugin.version}</version>
                 <executions>
                     <execution>
+                        <id>shade</id>
                         <phase>package</phase>
                         <goals>
                             <goal>shade</goal>
@@ -47,15 +71,41 @@
                             <!-- Do not generate a dependency-reduced POM -->
                             <createDependencyReducedPom>false</createDependencyReducedPom>
 
+                            <!-- Do not minimize FoliaLib/Jedis/Configurate unless fully tested -->
+                            <minimizeJar>false</minimizeJar>
+
                             <relocations>
+                                <!-- Configurate -->
                                 <relocation>
                                     <pattern>org.spongepowered</pattern>
                                     <shadedPattern>org.me.synccommand.shaded.org.spongepowered</shadedPattern>
                                 </relocation>
+
+                                <!-- Configurate transitive dependency -->
+                                <relocation>
+                                    <pattern>io.leangen.geantyref</pattern>
+                                    <shadedPattern>org.me.synccommand.shaded.io.leangen.geantyref</shadedPattern>
+                                </relocation>
+
+                                <!-- YAML parser used by Configurate YAML -->
+                                <relocation>
+                                    <pattern>org.yaml.snakeyaml</pattern>
+                                    <shadedPattern>org.me.synccommand.shaded.org.yaml.snakeyaml</shadedPattern>
+                                </relocation>
+
+                                <!-- Jedis -->
                                 <relocation>
                                     <pattern>redis.clients</pattern>
                                     <shadedPattern>org.me.synccommand.shaded.redis.clients</shadedPattern>
                                 </relocation>
+
+                                <!-- Jedis transitive dependency -->
+                                <relocation>
+                                    <pattern>org.apache.commons.pool2</pattern>
+                                    <shadedPattern>org.me.synccommand.shaded.org.apache.commons.pool2</shadedPattern>
+                                </relocation>
+
+                                <!-- FoliaLib -->
                                 <relocation>
                                     <pattern>com.tcoded.folialib</pattern>
                                     <shadedPattern>org.me.synccommand.shaded.com.tcoded.folialib</shadedPattern>
@@ -88,40 +138,35 @@
 
     <repositories>
         <repository>
-            <id>sonatype</id>
-            <url>https://oss.sonatype.org/content/groups/public/</url>
-        </repository>
-        <repository>
             <id>spigotmc-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+            <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
         </repository>
+
         <repository>
             <id>papermc-repo</id>
             <url>https://repo.papermc.io/repository/maven-public/</url>
         </repository>
+
         <repository>
-            <id>bungeecord-repo</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </repository>
-        <repository>
-            <id>jitpack</id>
-            <url>https://jitpack.io</url>
+            <id>tcoded-releases</id>
+            <url>https://repo.tcoded.com/releases</url>
         </repository>
     </repositories>
 
     <dependencies>
+        <!-- JetBrains Annotations -->
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version>24.0.1</version> <!-- Use the latest version -->
-            <scope>compile</scope>
+            <version>${annotations.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- Spigot API -->
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.21.4-R0.1-SNAPSHOT</version>
+            <version>${spigot.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -129,7 +174,7 @@
         <dependency>
             <groupId>com.velocitypowered</groupId>
             <artifactId>velocity-api</artifactId>
-            <version>3.2.0-SNAPSHOT</version>
+            <version>${velocity.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -137,15 +182,15 @@
         <dependency>
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-api</artifactId>
-            <version>1.21-R0.1-SNAPSHOT</version>
+            <version>${bungeecord.version}</version>
             <scope>provided</scope>
         </dependency>
 
-        <!-- Configurate (YAML) -->
+        <!-- Configurate YAML -->
         <dependency>
             <groupId>org.spongepowered</groupId>
             <artifactId>configurate-yaml</artifactId>
-            <version>4.1.2</version>
+            <version>${configurate.version}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -153,15 +198,15 @@
         <dependency>
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
-            <version>5.2.0</version>
+            <version>${jedis.version}</version>
             <scope>compile</scope>
         </dependency>
 
         <!-- FoliaLib -->
         <dependency>
-            <groupId>com.github.technicallycoded</groupId>
+            <groupId>com.tcoded</groupId>
             <artifactId>FoliaLib</artifactId>
-            <version>main-SNAPSHOT</version>
+            <version>${folialib.version}</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
