@@ -1,32 +1,38 @@
 package org.me.synccommand.velocity.command;
 
-import org.me.synccommand.shared.ConfigHelper;
-import org.me.synccommand.velocity.SyncCommandVelocity;
-
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import org.me.synccommand.velocity.ConfigHelper;
+import org.me.synccommand.velocity.SyncCommandVelocity;
 
 public class SyncCommandReload implements SimpleCommand {
 
-    private final SyncCommandVelocity plugin;
-    private final ConfigHelper config;
+    private static final LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.legacySection();
 
-    public SyncCommandReload(SyncCommandVelocity plugin, ConfigHelper config) {
+    private final SyncCommandVelocity plugin;
+
+    public SyncCommandReload(SyncCommandVelocity plugin) {
         this.plugin = plugin;
-        this.config = config;
     }
 
     @Override
     public void execute(Invocation invocation) {
         CommandSource source = invocation.source();
 
+        ConfigHelper config = plugin.getConfigHelper();
+
         if (!source.hasPermission("synccommand.admin")) {
-            source.sendMessage(Component.text(config.getNoPermissionMessage()));
+            source.sendMessage(LEGACY_SERIALIZER.deserialize(config.getNoPermissionMessage()));
             return;
         }
 
-        plugin.reload();
-        source.sendMessage(Component.text(config.getReloadMessage()));
+        if (!plugin.reload()) {
+            source.sendMessage(Component.text("Failed to reload SyncCommand. " + "Check the proxy console."));
+            return;
+        }
+
+        source.sendMessage(LEGACY_SERIALIZER.deserialize(plugin.getConfigHelper().getReloadMessage()));
     }
 }

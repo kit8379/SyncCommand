@@ -1,18 +1,14 @@
-# Redis Configuration
 redis:
-  host: localhost
+  host: "localhost"
   port: 6379
-  password: '' # Empty password as default. Adjust if needed.
+  password: ""
 
-# Channels that the plugin will listen to.
 channels:
-  - channel1
-  - channel2
-  # Add more channels as needed
+  - "channel1"
+  - "channel2"
 
-# Plugin Messages Configuration
 messages:
-  reload: '&aSyncCommand has been reloaded.'
-  usage: '&cUsage: /sync <channel> <command>'
-  noPermission: '&cYou do not have permission to use this command.'
-  commandSynced: '&aCommand has been synced to the %s channel.'
+  reload: "&aSyncCommand configuration reloaded."
+  usage: "&cUsage: /sync (Bukkit) or /syncb (Bungee) or /syncv (Velocity) <channel> <command>"
+  noPermission: "&cYou do not have permission."
+  commandSynced: "&aCommand synced to channel &e%s&a."

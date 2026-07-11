@@ -8,18 +8,21 @@ import org.me.synccommand.bukkit.ConfigHelper;
 import org.me.synccommand.bukkit.SyncCommandBukkit;
 import org.me.synccommand.shared.redis.RedisHandler;
 
+import java.util.Arrays;
+import java.util.logging.Level;
+
 public class SyncCommandSync implements CommandExecutor {
 
     private final SyncCommandBukkit plugin;
-    private final ConfigHelper config;
 
-    public SyncCommandSync(SyncCommandBukkit plugin, ConfigHelper config) {
+    public SyncCommandSync(SyncCommandBukkit plugin) {
         this.plugin = plugin;
-        this.config = config;
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+        ConfigHelper config = plugin.getConfigHelper();
+
         if (!sender.hasPermission("synccommand.admin")) {
             sender.sendMessage(config.getNoPermissionMessage());
             return true;
@@ -31,12 +34,19 @@ public class SyncCommandSync implements CommandExecutor {
         }
 
         String channel = args[0];
-        String syncCommand = String.join(" ", args).substring(channel.length()).trim();
 
-        // Schedule Redis publish
-        plugin.getFoliaLib().getScheduler().runAsync(task -> RedisHandler.publish(channel, syncCommand));
+        String syncCommand = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
+
+        plugin.getFoliaLib().getScheduler().runAsync(task -> {
+            try {
+                RedisHandler.publish(channel, syncCommand);
+            } catch (Exception e) {
+                plugin.getLogger().log(Level.SEVERE, "Failed to publish command to Redis channel '" + channel + "'.", e);
+            }
+        });
 
         sender.sendMessage(config.getCommandSyncedMessage(channel));
+
         return true;
     }
 }

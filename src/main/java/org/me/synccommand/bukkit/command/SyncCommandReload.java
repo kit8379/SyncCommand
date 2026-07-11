@@ -1,31 +1,36 @@
 package org.me.synccommand.bukkit.command;
 
-import org.jetbrains.annotations.NotNull;
-import org.me.synccommand.bukkit.SyncCommandBukkit;
-import org.me.synccommand.bukkit.ConfigHelper;
-
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
+import org.me.synccommand.bukkit.ConfigHelper;
+import org.me.synccommand.bukkit.SyncCommandBukkit;
 
 public class SyncCommandReload implements CommandExecutor {
 
     private final SyncCommandBukkit plugin;
-    private final ConfigHelper config;
 
-    public SyncCommandReload(SyncCommandBukkit plugin, ConfigHelper config) {
+    public SyncCommandReload(SyncCommandBukkit plugin) {
         this.plugin = plugin;
-        this.config = config;
     }
 
     @Override
     public boolean onCommand(CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
+        ConfigHelper config = plugin.getConfigHelper();
+
         if (!sender.hasPermission("synccommand.admin")) {
             sender.sendMessage(config.getNoPermissionMessage());
             return true;
         }
-        plugin.reload();
-        sender.sendMessage(config.getReloadMessage());
+
+        if (!plugin.reload()) {
+            sender.sendMessage("§cFailed to reload SyncCommand. " + "Check the server console.");
+            return true;
+        }
+
+        sender.sendMessage(plugin.getConfigHelper().getReloadMessage());
+
         return true;
     }
 }

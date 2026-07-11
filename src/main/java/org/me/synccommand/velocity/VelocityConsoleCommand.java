@@ -11,11 +11,6 @@ public class VelocityConsoleCommand implements ConsoleCommand {
         this.proxy = proxy;
     }
 
-    /**
-     * Execute a command as the console.
-     *
-     * @param command The command string to execute.
-     */
     @Override
     public void executeCommand(String command) {
         proxy.getCommandManager().executeAsync(proxy.getConsoleCommandSource(), command);

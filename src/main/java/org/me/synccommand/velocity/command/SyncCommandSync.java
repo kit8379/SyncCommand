@@ -2,22 +2,21 @@ package org.me.synccommand.velocity.command;
 
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
-import com.velocitypowered.api.proxy.ProxyServer;
-import net.kyori.adventure.text.Component;
-import org.me.synccommand.shared.ConfigHelper;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.me.synccommand.shared.redis.RedisHandler;
+import org.me.synccommand.velocity.ConfigHelper;
 import org.me.synccommand.velocity.SyncCommandVelocity;
+
+import java.util.Arrays;
 
 public class SyncCommandSync implements SimpleCommand {
 
-    private final SyncCommandVelocity plugin;
-    private final ProxyServer proxy;
-    private final ConfigHelper config;
+    private static final LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.legacySection();
 
-    public SyncCommandSync(SyncCommandVelocity plugin, ProxyServer proxy, ConfigHelper config) {
+    private final SyncCommandVelocity plugin;
+
+    public SyncCommandSync(SyncCommandVelocity plugin) {
         this.plugin = plugin;
-        this.proxy = proxy;
-        this.config = config;
     }
 
     @Override
@@ -25,21 +24,30 @@ public class SyncCommandSync implements SimpleCommand {
         CommandSource source = invocation.source();
         String[] args = invocation.arguments();
 
+        ConfigHelper config = plugin.getConfigHelper();
+
         if (!source.hasPermission("synccommand.admin")) {
-            source.sendMessage(Component.text(config.getNoPermissionMessage()));
+            source.sendMessage(LEGACY_SERIALIZER.deserialize(config.getNoPermissionMessage()));
             return;
         }
 
         if (args.length < 2) {
-            source.sendMessage(Component.text(config.getUsageMessage()));
+            source.sendMessage(LEGACY_SERIALIZER.deserialize(config.getUsageMessage()));
             return;
         }
 
         String channel = args[0];
-        String command = String.join(" ", args).substring(channel.length()).trim();
 
-        proxy.getScheduler().buildTask(plugin, () -> RedisHandler.publish(channel, command)).schedule();
+        String syncCommand = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
 
-        source.sendMessage(Component.text(config.getCommandSyncedMessage(channel)));
+        plugin.getProxy().getScheduler().buildTask(plugin, () -> {
+            try {
+                RedisHandler.publish(channel, syncCommand);
+            } catch (Exception e) {
+                plugin.getLogger().error("Failed to publish command to Redis channel '{}'.", channel, e);
+            }
+        }).schedule();
+
+        source.sendMessage(LEGACY_SERIALIZER.deserialize(config.getCommandSyncedMessage(channel)));
     }
 }

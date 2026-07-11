@@ -11,11 +11,6 @@ public class BungeeConsoleCommand implements ConsoleCommand {
         this.proxy = proxy;
     }
 
-    /**
-     * Execute a command as the console.
-     *
-     * @param command The command string to execute.
-     */
     @Override
     public void executeCommand(String command) {
         proxy.getPluginManager().dispatchCommand(proxy.getConsole(), command);

@@ -3,7 +3,7 @@
         xmlns="http://maven.apache.org/POM/4.0.0"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-                            http://maven.apache.org/xsd/maven-4.0.0.xsd">
+                            https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -13,65 +13,146 @@
     <packaging>jar</packaging>
 
     <name>SyncCommand</name>
+    <description>Sync commands across Bukkit, BungeeCord and Velocity servers</description>
 
     <properties>
+        <!-- Project -->
         <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- Maven Plugins -->
+        <maven.compiler.plugin.version>3.15.0</maven.compiler.plugin.version>
+        <maven.shade.plugin.version>3.6.2</maven.shade.plugin.version>
+
+        <!-- Platform APIs -->
+        <spigot.version>26.2-R0.1-SNAPSHOT</spigot.version>
+        <velocity.version>3.5.0-SNAPSHOT</velocity.version>
+        <bungeecord.version>1.21-R0.4</bungeecord.version>
+
+        <!-- Libraries -->
+        <annotations.version>26.1.0</annotations.version>
+        <configurate.version>4.2.0</configurate.version>
+        <jedis.version>7.5.3</jedis.version>
+        <folialib.version>0.5.1</folialib.version>
     </properties>
 
     <build>
         <finalName>${project.artifactId}</finalName>
+
         <plugins>
-            <!-- Compiler Plugin -->
+            <!-- Java Compiler -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.13.0</version>
+                <version>${maven.compiler.plugin.version}</version>
+
                 <configuration>
                     <release>${java.version}</release>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <showWarnings>true</showWarnings>
+
+                    <!--
+                    Velocity uses an annotation processor to generate
+                    velocity-plugin.json from the @Plugin annotation.
+                    -->
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>com.velocitypowered</groupId>
+                            <artifactId>velocity-api</artifactId>
+                            <version>${velocity.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
 
-            <!-- Shade Plugin -->
+            <!-- Shade bundled libraries into the final JAR -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.6.0</version>
+                <version>${maven.shade.plugin.version}</version>
+
                 <executions>
                     <execution>
                         <phase>package</phase>
+
                         <goals>
                             <goal>shade</goal>
                         </goals>
+
                         <configuration>
-                            <!-- Do not generate a dependency-reduced POM -->
                             <createDependencyReducedPom>false</createDependencyReducedPom>
 
                             <relocations>
+                                <!-- Configurate -->
                                 <relocation>
-                                    <pattern>org.spongepowered</pattern>
-                                    <shadedPattern>org.me.synccommand.shaded.org.spongepowered</shadedPattern>
+                                    <pattern>org.spongepowered.configurate</pattern>
+                                    <shadedPattern>
+                                        org.me.synccommand.shaded.configurate
+                                    </shadedPattern>
                                 </relocation>
+
+                                <!-- Jedis -->
                                 <relocation>
                                     <pattern>redis.clients</pattern>
-                                    <shadedPattern>org.me.synccommand.shaded.redis.clients</shadedPattern>
+                                    <shadedPattern>
+                                        org.me.synccommand.shaded.redis.clients
+                                    </shadedPattern>
                                 </relocation>
+
+                                <!-- Jedis connection pool dependency -->
+                                <relocation>
+                                    <pattern>org.apache.commons.pool2</pattern>
+                                    <shadedPattern>
+                                        org.me.synccommand.shaded.org.apache.commons.pool2
+                                    </shadedPattern>
+                                </relocation>
+
+                                <!-- Jedis JSON dependencies -->
+                                <relocation>
+                                    <pattern>com.google.gson</pattern>
+                                    <shadedPattern>
+                                        org.me.synccommand.shaded.com.google.gson
+                                    </shadedPattern>
+                                </relocation>
+
+                                <relocation>
+                                    <pattern>org.json</pattern>
+                                    <shadedPattern>
+                                        org.me.synccommand.shaded.org.json
+                                    </shadedPattern>
+                                </relocation>
+
+                                <!-- FoliaLib -->
                                 <relocation>
                                     <pattern>com.tcoded.folialib</pattern>
-                                    <shadedPattern>org.me.synccommand.shaded.com.tcoded.folialib</shadedPattern>
+                                    <shadedPattern>
+                                        org.me.synccommand.shaded.folialib
+                                    </shadedPattern>
                                 </relocation>
                             </relocations>
 
-                            <!-- Filters -->
                             <filters>
                                 <filter>
                                     <artifact>*:*</artifact>
+
                                     <excludes>
-                                        <exclude>META-INF/**</exclude>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+
                                         <exclude>module-info.class</exclude>
+                                        <exclude>
+                                            META-INF/versions/*/module-info.class
+                                        </exclude>
                                     </excludes>
                                 </filter>
                             </filters>
+
+                            <transformers>
+                                <!-- Preserve and merge ServiceLoader metadata -->
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                            </transformers>
                         </configuration>
                     </execution>
                 </executions>
@@ -87,41 +168,39 @@
     </build>
 
     <repositories>
-        <repository>
-            <id>sonatype</id>
-            <url>https://oss.sonatype.org/content/groups/public/</url>
-        </repository>
+        <!-- Spigot snapshot API -->
         <repository>
             <id>spigotmc-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
+
+        <!-- Velocity API -->
         <repository>
             <id>papermc-repo</id>
             <url>https://repo.papermc.io/repository/maven-public/</url>
         </repository>
+
+        <!-- FoliaLib -->
         <repository>
-            <id>bungeecord-repo</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </repository>
-        <repository>
-            <id>jitpack</id>
-            <url>https://jitpack.io</url>
+            <id>tcoded-releases</id>
+            <url>https://repo.tcoded.com/releases</url>
         </repository>
     </repositories>
 
     <dependencies>
+        <!-- JetBrains compile-time annotations -->
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version>24.0.1</version> <!-- Use the latest version -->
-            <scope>compile</scope>
+            <version>${annotations.version}</version>
+            <scope>provided</scope>
         </dependency>
 
-        <!-- Spigot API -->
+        <!-- Bukkit / Spigot API -->
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.21.4-R0.1-SNAPSHOT</version>
+            <version>${spigot.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -129,7 +208,7 @@
         <dependency>
             <groupId>com.velocitypowered</groupId>
             <artifactId>velocity-api</artifactId>
-            <version>3.2.0-SNAPSHOT</version>
+            <version>${velocity.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -137,32 +216,30 @@
         <dependency>
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-api</artifactId>
-            <version>1.21-R0.1-SNAPSHOT</version>
+            <version>${bungeecord.version}</version>
             <scope>provided</scope>
         </dependency>
 
-        <!-- Configurate (YAML) -->
+        <!-- Configurate YAML -->
         <dependency>
             <groupId>org.spongepowered</groupId>
             <artifactId>configurate-yaml</artifactId>
-            <version>4.1.2</version>
-            <scope>compile</scope>
+            <version>${configurate.version}</version>
         </dependency>
 
-        <!-- Jedis -->
+        <!-- Redis client -->
         <dependency>
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
-            <version>5.2.0</version>
-            <scope>compile</scope>
+            <version>${jedis.version}</version>
         </dependency>
 
-        <!-- FoliaLib -->
+        <!-- Cross-platform Bukkit / Paper / Folia scheduler -->
         <dependency>
-            <groupId>com.github.technicallycoded</groupId>
+            <groupId>com.tcoded</groupId>
             <artifactId>FoliaLib</artifactId>
-            <version>main-SNAPSHOT</version>
-            <scope>compile</scope>
+            <version>${folialib.version}</version>
         </dependency>
     </dependencies>
+
 </project>

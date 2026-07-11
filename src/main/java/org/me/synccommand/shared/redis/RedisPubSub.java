@@ -3,16 +3,12 @@ package org.me.synccommand.shared.redis;
 import org.me.synccommand.shared.ConsoleCommand;
 import redis.clients.jedis.JedisPubSub;
 
-import java.util.logging.Logger;
-
 public class RedisPubSub {
 
-    private final Logger logger;
     private final ConsoleCommand consoleCommand;
     private JedisPubSub pubSub;
 
-    public RedisPubSub(Logger logger, ConsoleCommand consoleCommand) {
-        this.logger = logger;
+    public RedisPubSub(ConsoleCommand consoleCommand) {
         this.consoleCommand = consoleCommand;
     }
 
@@ -23,17 +19,20 @@ public class RedisPubSub {
                 consoleCommand.executeCommand(message);
             }
         };
-        logger.info("PubSub instance created and ready to subscribe.");
     }
 
     public void shut() {
         if (pubSub != null) {
             pubSub.unsubscribe();
-            logger.info("Unsubscribed from all channels.");
+            pubSub = null;
         }
     }
 
     public JedisPubSub getPubSub() {
+        if (pubSub == null) {
+            throw new IllegalStateException("Redis PubSub has not been initialized.");
+        }
+
         return pubSub;
     }
 }
