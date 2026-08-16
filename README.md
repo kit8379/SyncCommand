@@ -1,105 +1,59 @@
-<h1 align="center">🚀 SyncCommand 🚀</h1>
-<div align="center"></div>
+# SyncCommand
 
-SyncCommand - the ultimate command bridge between multiple servers! Ever wished you could sync a command across multiple servers in a heartbeat? Now you can! Powered by the blazing fast Redis, SyncCommand delivers that promise.
+A Minecraft plugin that synchronizes commands across multiple servers using Redis. It works as a Bukkit/Spigot/Paper/Folia, BungeeCord, and Velocity plugin.
 
-🌟 About 🌟
+## Why Redis
 
-SyncCommand is a robust and innovative plugin that enables the synchronization of commands across servers via Redis. Designed with performance and flexibility in mind, it offers server admins a seamless solution to manage cross-server commands, making multi-server setups more cohesive and interconnected.
+Unlike Bungee plugin messaging, which gets complicated with multiple proxies, Redis Pub/Sub lets any server publish a command to a channel that every other server listens on. This works regardless of how your network is structured.
 
-🌟 Features 🌟
+## Features
 
-    🎮 Multi-Platform Support: Whether you're on Bukkit, Spigot, Paper, Folia, Velocity, or Bungee, we've got you covered!
+- **Multi-platform** — Runs on Bukkit, Spigot, Paper, Folia, BungeeCord, and Velocity.
+- **Multiple channels** — Send commands to specific groups of servers instead of the whole network.
+- **Permission based** — Only players with the `synccommand.admin` permission can use the commands.
+- **Customizable messages** — All messages are configurable in `config.yml`.
 
-    🔥 Redis-Powered Beyond Bungee's Limits: Leveraging the might of Redis, we've broken the chains! Bypass the constraints of Bungee plugin messaging which struggles with multiple proxies. Dive into limitless command synchronization in real-time!
+## Installation
 
-    🌐 Multiple Channels Listening: Classify, categorize, and send commands uniquely to groups of servers. Multiple channels mean multiple avenues to orchestrate your server commands!
+1. Download the SyncCommand jar.
+2. Put it in the `plugins` folder of each server (Bukkit and/or proxy).
+3. Restart the servers.
+4. Set the Redis host/port/password in `config.yml` and restart again.
 
-    🔒 Permissions Support: Safety first! With refined permissions, only the worthy shall pass. Ward off mischief-makers!
+## Configuration
 
-    🛠️ Personalized Configuration: Your server, your channel group! A configuration crafted to resonate with your needs.
-
-    📜 Logs & Alerts: Stay ahead, stay informed! Monitor activities with precision, ensuring you never miss a beat!
-
-🔧 Installation 🔧
-
-    📥 Download the majestic SyncCommand plugin jar.
-    📁 Pop it into your server's plugins folder.
-    🔄 Restart that server. Watch SyncCommand rise!
-
-🛠️ Configuration - It's Easy-Peasy! 🛠️
-
-    📜 Open the config.yml file in your favorite text editor.
-    📝 Edit the configuration to your liking.
-    🔄 Restart your server. Watch SyncCommand rise!
-
-config.yml (default):
 ```yaml
 redis:
-  host: "your_redis_server_here"
-  port: 6379 # Default port, change if yours is different
-  password: "Your_Secret_Password" # Keep it secret, keep it safe!
+  host: "localhost"
+  port: 6379
+  password: ""
+
 channels:
-  - "GeneralChat"
-  - "ModChat"
+  - "channel1"
+  - "channel2"
+
 messages:
-  reload: "&aFeel the magic! SyncCommand reloaded!"
-  usage: "&cHey! Use like this: /sync <enable|disable>"
-  noPermission: "&cNuh-uh! You can't do that here!"
-  commandSynced: "&aBoom! Command synced to %s channel."
+  reload: "&aSyncCommand configuration reloaded."
+  usage: "&cUsage: /sync (Bukkit) or /syncb (Bungee) or /syncv (Velocity) <channel> <command>"
+  noPermission: "&cYou do not have permission."
+  commandSynced: "&aCommand synced to channel &e%s&a."
 ```
-    
-💬 Commands 💬
 
-    Bukkit:
-    /sync [channel] [command]: 🌉 Sync your commands to the specified channel
-        permission → synccommand.admin
+The `channels` list is just documentation of which channels exist. Any string can be used as a channel when running a sync command.
 
-    /syncreload: 🔄 Reload the plugin
-        Permission → synccommand.admin
+## Commands
 
-    Bungee:
-    /syncb <channel> <command>: 🌉 Sync your commands to the specified channel
-        permission → synccommand.admin
-    
-    /syncbreload: 🔄 Reload the plugin
-        Permission → synccommand.admin
+| Platform | Command | Description |
+| --- | --- | --- |
+| Bukkit | `/sync <channel> <command>` | Publish a command to a channel |
+| Bukkit | `/syncreload` | Reload the config |
+| Bungee | `/syncb <channel> <command>` | Publish a command to a channel |
+| Bungee | `/syncbreload` | Reload the config |
+| Velocity | `/syncv <channel> <command>` | Publish a command to a channel |
+| Velocity | `/syncvreload` | Reload the config |
 
-    Velocity:
-    /syncv <channel> <command>: 🌉 Sync your commands to the specified channel
-        permission → synccommand.admin
-    
-    /syncvreload: 🔄 Reload the plugin
-        Permission → synccommand.admin
-🔐 Permissions 🔐
+All commands require the `synccommand.admin` permission, which defaults to `op`.
 
-    synccommand.admin: The golden key. Unlocks the world of SyncCommand.
+## License
 
-📝 To-Do List 📝
-
-    🧽 Sponge Integration: On our roadmap is the integration with Sponge, expanding our compatibility even further!
-
-    📡 Bungee Messaging Support: We get it - setting up an extra Redis server might not be everyone's cup of tea. For those with a single proxy setup, we're in the works to add Bungee Messaging support. However, I strongly encourage delving into Redis for the most optimal and lag-free experience!
-
-    🎮 Player Sudo Command Support: Enhancing command flexibility! Soon, you'll be able to make a player execute a command as if they typed it themselves. Stay tuned!
-
-❓ Need Help? ❓
-
-    Drop us a message anytime! We're always here, always listening. Your feedback fuels our fire! 🔥
-    Let the magic of SyncCommand elevate your server game. Hit that download, and let’s get syncing! 🌟
-
-📜 License 📜
-
-SyncCommand is proudly offered under the MIT License. Here's what it means for you:
-
-    🤝 Non-commercial Use: You're free to use SyncCommand on any of your servers. However, please don't sell it or package it as part of a commercial offering.
-
-    🔄 Modification: Want to tweak something? Go ahead! You're free to modify SyncCommand for your personal/server use. Just don't distribute the modified version without our consent.
-
-    🤲 Sharing: Love our plugin? Tell the world! However, if someone wants to use it, please direct them to our official SpigotMC page. No re-uploading or distributing through unofficial channels.
-
-    📢 Attribution: If you're showcasing or discussing our plugin in videos, articles, or other media, a shoutout to the original SyncCommand SpigotMC page would be much appreciated!
-
-    🚫 No Warranty: While we strive to offer the best, SyncCommand comes as-is, without any warranty. But worry not, our community is here to help with any hiccups you might encounter!
-
-    🔗 Detailed License: For those who like the nitty-gritty, you can find the detailed license on GitHub repository.
+[MIT](LICENSE)
